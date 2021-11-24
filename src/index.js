@@ -15,7 +15,7 @@ let totalHits
 searchForm.addEventListener('submit', onSubmit)
 loadMoreBtn.addEventListener('click', loadMore)
 
-function onSubmitCreateCard(image) {
+function submitCreateCard(image) {
 
     const dataCardImages = image.data.hits;
     
@@ -90,7 +90,7 @@ async function onSubmit(event) {
     searchPictures = searchForm.searchQuery.value.trim();
 
     const images = await getPictures(searchPictures, page, PicturesLimit);
-onSubmitCreateCard(images);
+submitCreateCard(images);
 
    loadMoreBtn.classList.remove('is-hidden');
 };
