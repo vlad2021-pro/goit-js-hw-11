@@ -1,29 +1,26 @@
-// import './css/styles.css';
-import Notiflix from 'notiflix'
-import { getPictures } from './aip.axios'
+const searchForm = document.querySelector('#search-form');
+const loadMoreButton = document.querySelector('.load-more');
+const galleryList = document.querySelector('.gallery');
 
-
-const searchForm = document.querySelector('#search-form')
-const loadMoreBtn = document.querySelector('.load-more')
-const galleryContainer = document.querySelector('.gallery')
-
-let searchPictures = ""
+let searchImage = "";
 let page = 1;
-let PicturesLimit = 40
-let totalHits
+let imageLimit = 40;
+let totalHits;
 
-searchForm.addEventListener('submit', onSubmit)
-loadMoreBtn.addEventListener('click', loadMore)
 
-function onSubmitCreateCard(image) {
+searchForm.addEventListener('submit', onSubmit);
+loadMoreButton.addEventListener('click', onLoadMore);
 
-    const dataCardImages = image.data.hits;
+
+function onSubmitcreateCard(image) {
+
+    const imageCardData = image.data.hits;
     
-    if (dataCardImages.length === 0) {
-        Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.')
+    if (imageCardData.length === 0) {
+       Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.'); 
     }
-    else {
-        galleryContainer.innerHTML = dataCardImages.reduce((imagesList, { webformatURL, tags, likes, views, comments, downloads }) => {
+    else{
+        galleryList.innerHTML = imageCardData.reduce((imagesList, { webformatURL, tags, likes, views, comments, downloads }) => {
             const template = `<div class="photo-card">
                 <img src="${webformatURL}" alt="${tags}" loading="lazy width=60px" />
                 <div class="info">
@@ -40,17 +37,17 @@ function onSubmitCreateCard(image) {
                     <b>Downloads: <span class=info-item-color>${downloads}</span></b>
                     </p>
                 </div>
-                </div>`
-            return imagesList + template
-        }, '')
+                </div>`;
+            return imagesList + template;
+        }, '');
     }
-}
+};
 
 function onLoadMoreCreateCard(image) {
-    const dataCardImages = image.data.hits
-    totalHits = image.data.totalHits
+    const imageCardData = image.data.hits;
+    totalHits = image.data.totalHits;
     
-    dataCardImages.map(({ webformatURL, tags, likes, views, comments, downloads }) => {
+    imageCardData.map(({ webformatURL, tags, likes, views, comments, downloads }) => {
        const string = `<div class="photo-card">
                 <img src="${webformatURL}" alt="${tags}" loading="lazy"/>
                 <div class="info">
@@ -67,30 +64,33 @@ function onLoadMoreCreateCard(image) {
                     <b>Downloads: <span class=info-item-color>${downloads}</span></b>
                     </p>
                 </div>
-                </div>`
-        imagesContainer.insertAdjacentHTML('beforeend', string)
+                </div>`;
+        galleryList.insertAdjacentHTML('beforeend', string);
     })
-}
-    async function loadMore() {
-    if (page * PicturesLimit >= totalHits) {
-        loadMoreBtn.classList.add('is-hidden');
-        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
+
+    
+};
+
+async function onLoadMore() {
+    if (page * imageLimit >= totalHits) {
+        loadMoreButton.classList.add('is-hidden');
+        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
     } else {
         page += 1;
-        const images = await getPictures(searchPictures, page, PicturesLimit)
-        onLoadMoreCreateCard(images);
+        const images = await getImages(searchImage, page, imageLimit);
+        LoadMoreCreateCard(images);
     }
-}
+};
 
 async function onSubmit(event) {
     event.preventDefault();
     page = 1;
 
-    loadMoreBtn.classList.add('is-hidden');
-    searchPictures = searchForm.searchQuery.value.trim();
+    loadMoreButton.classList.add('is-hidden');
+    searchImage = searchForm.searchQuery.value.trim();
 
-    const images = await getPictures(searchPictures, page, PicturesLimit);
-onSubmitCreateCard(images);
+    const images = await getImages(searchImage, page, imageLimit);
+    onSubmitcreateCard(images);
 
-   loadMoreBtn.classList.remove('is-hidden');
+    loadMoreButton.classList.remove('is-hidden');
 };
