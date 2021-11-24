@@ -46,7 +46,7 @@ function submitCreateCard(image) {
     }
 }
 
-function onLoadMoreCreateCard(image) {
+function loadMoreCreateCard(image) {
     const dataCardImages = image.data.hits
     totalHits = image.data.totalHits
     
@@ -78,7 +78,7 @@ function onLoadMoreCreateCard(image) {
     } else {
         page += 1;
         const images = await getPictures(searchPictures, page, PicturesLimit)
-        onLoadMoreCreateCard(images);
+        loadMoreCreateCard(images);
     }
 }
 
